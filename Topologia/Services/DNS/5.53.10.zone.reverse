@@ -1,0 +1,22 @@
+$ORIGIN 5.53.10.in-addr.arpa.
+$TTL 1800
+@   IN  SOA ns1.srv03nsd.local. root.local. (
+    2014070201        ; serial number
+    3600                    ; refresh
+    900                     ; retry
+    1209600                 ; expire
+    1800                    ; ttl
+)
+
+; Name servers
+
+                IN NS                 ns1.srv03nsd.local.
+                IN NS                 ns2.srv04nsd.local.
+
+; PTR record for services
+
+3               IN      PTR     srv03nsd.local.
+4               IN      PTR     srv04nsd.local.
+1               IN      PTR     srv01dhcp.local.
+2               IN      PTR     srv02dhcp.local.
+

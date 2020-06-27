@@ -1,0 +1,156 @@
+#Script para agilizar o uso dos serviços.
+echo SRV03-NSD > /etc/hostname \
+&& rc-service hostname restart \
+&& printf "%b\n"\
+    "auto lo"\
+    "iface lo inet loopback\n"\
+    "auto eth0"\
+    "iface eth0 inet static"\
+    "   address 10.53.5.3"\
+    "   netmask 255.255.255.240"\
+    "   gateway 10.53.5.13" > /etc/network/interfaces \
+&& rc-service networking restart \
+&& printf "%b\n"\
+    "nameserver 10.53.5.3"\
+    "nameserver 10.53.5.4"\
+    "nameserver 1.1.1.1" > /etc/resolv.conf \
+&& printf "%b\n"\
+    "#/media/cdrom/apks"\
+    "/v3.10/main"\
+    "/v3.10/community"\
+    "/edge/main"\
+    "/edge/community"\
+    "#/edge/testing\n"\
+    "http://dl-cdn.alpinelinux.org/alpine/v3.10/main"\
+    "http://dl-cdn.alpinelinux.org/alpine/v3.10/community"\
+    "http://dl-cdn.alpinelinux.org/alpine/edge/main"\
+    "http://dl-cdn.alpinelinux.org/alpine/edge/community"\
+    "#http://dl-cdn.alpinelinux.org/alpine/edge/testing" > /etc/apk/repositories \
+&& apk update \
+&& apk add nsd \
+&& cd /etc/nsd && touch nsd.conf \
+&& printf \
+"server:
+        ip-address: 10.53.5.3
+        port: 53
+        username: nsd
+        identity: \"\"
+        zonesdir: \"/etc/nsd/zones\"
+        logfile: \"/var/log/nsd.log\"
+
+remote-control:
+        control-enable: yes
+        control-interface: 127.0.0.1
+        control-port: 8952
+        server-key-file: \"/etc/nsd/nsd_server.key\"
+        server-cert-file: \"/etc/nsd/nsd_server.pem\"
+        control-key-file: \"/etc/nsd/nsd_control.key\"
+        control-cert-file: \"/etc/nsd/nsd_control.pem\"
+
+key:
+        name: \"sec_key\"
+        algorithm: hmac-md5
+        secret: "HU7+Bs4FjmyjET7aqdJMAXNSdG0v"
+
+pattern:
+        name: \"request_pattern\"
+        notify: 10.53.5.4 sec_key
+        provide-xfr: 10.53.5.4 sec_key
+
+zone:
+        name: \"local\"
+        zonefile: \"local.zone.foward\"
+        include-pattern: \"request_pattern\"
+
+zone:
+        name: \"5.53.10.in-addr.arpa\"
+        zonefile: \"5.53.10.zone.reverse\"
+        include-pattern: \"request_pattern\"
+
+zone:
+        name: \"99.99.172.in-addr.arpa\"
+        zonefile: \"99.99.172.zone.reverse\"
+        include-pattern: \"request_pattern\"
+" > /etc/nsd/nsd.conf \
+&& mkdir /etc/nsd/zones \
+&& cd /etc/nsd/zones \
+&& touch local.zone.foward \
+&& printf \
+"
+\$ORIGIN local.
+\$TTL 86400
+@ IN SOA ns1.local. root.local. (
+    2011100501      ; serial
+    28800           ; refresh
+    7200            ; retry
+    86400           ; expire
+    86400           ; min TTL
+)
+
+                  IN NS                 ns1.srv03nsd.local.
+                  IN NS                 ns2.srv04nsd.local.
+
+srv03nsd          IN A                  10.53.5.3
+srv04nsd          IN A                  10.53.5.4
+srv01dhcp         IN A                  10.53.5.1
+srv02dhcp         IN A                  10.53.5.2
+ 
+sw01core          IN A                  172.99.99.29  
+sw02core          IN A                  172.99.99.30
+sw03access        IN A                  172.99.99.10
+sw04access        IN A                  172.99.99.11
+sw05access        IN A                  172.99.99.12
+r01gw             IN A                  172.99.99.20
+r02gw             IN A                  172.99.99.21
+" > ./local.zone.foward \
+&& touch 5.53.10.zone.reverse \
+&& printf \
+"
+\$ORIGIN 5.53.10.in-addr.arpa.
+\$TTL 1800
+@   IN  SOA ns1.srv03nsd.local. root.local. (
+    2014070201        ; serial number
+    3600                    ; refresh
+    900                     ; retry
+    1209600                 ; expire
+    1800                    ; ttl
+)
+
+                IN NS                 ns1.srv03nsd.local.
+                IN NS                 ns2.srv04nsd.local.
+
+
+3               IN      PTR     srv03nsd.local.
+4               IN      PTR     srv04nsd.local.
+1               IN      PTR     srv01dhcp.local.
+2               IN      PTR     srv02dhcp.local.
+" > ./5.53.10.zone.reverse \
+&& touch 99.99.172.zone.reverse \
+&& printf \
+"
+\$ORIGIN 99.99.172.in-addr.arpa.
+\$TTL 1800
+@   IN  SOA ns1.srv03nsd.local. root.local. (
+    2014070201        ; serial number
+    3600                    ; refresh
+    900                     ; retry
+    1209600                 ; expire
+    1800                    ; ttl
+)
+
+                IN NS                 ns1.srv03nsd.local.
+                IN NS                 ns2.srv04nsd.local.
+
+29               IN      PTR     sw01core.local.
+30               IN      PTR     sw02core.local.
+10               IN      PTR     sw03access.local.
+11               IN      PTR     sw04access.local.
+12               IN      PTR     sw05access.local.
+20               IN      PTR     r01gw.local.
+21               IN      PTR     r02gw.local.
+" > ./99.99.172.zone.reverse \
+&& nsd-control-setup \
+&& rc-service nsd start \
+&& rc-update add nsd \
+&& tail -f /var/log/nsd.log &
+

@@ -1,0 +1,87 @@
+#Script para agilizar o uso dos serviços.
+echo SRV01-DHCP > /etc/hostname \
+&& rc-service hostname restart \
+&& printf "%b\n"\
+    "auto lo"\
+    "iface lo inet loopback\n"\
+    "auto eth0"\
+    "iface eth0 inet static"\
+    "   address 10.53.5.1"\
+    "   netmask 255.255.255.240"\
+    "   gateway 10.53.5.13" > /etc/network/interfaces \
+&& rc-service networking restart \
+&& printf "%b\n"\
+    "nameserver 10.53.5.3"\
+    "nameserver 10.53.5.4"\
+    "nameserver 1.1.1.1" > /etc/resolv.conf \
+&& printf "%b\n"\
+    "#/media/cdrom/apks"\
+    "/v3.10/main"\
+    "/v3.10/community"\
+    "/edge/main"\
+    "/edge/community"\
+    "#/edge/testing\n"\
+    "http://dl-cdn.alpinelinux.org/alpine/v3.10/main"\
+    "http://dl-cdn.alpinelinux.org/alpine/v3.10/community"\
+    "http://dl-cdn.alpinelinux.org/alpine/edge/main"\
+    "http://dl-cdn.alpinelinux.org/alpine/edge/community"\
+    "#http://dl-cdn.alpinelinux.org/alpine/edge/testing" > /etc/apk/repositories \
+&& apk update \
+&& apk add dhcp \
+&& touch /etc/dhcp/dhcpd.conf \
+&& printf \
+"
+option domain-name \"SRV01-DHCP\";
+option domain-name-servers 10.53.5.3,10.53.5.4,1.1.1.1;
+
+authoritative;
+option ntp-servers 200.160.0.8,200.160.7.186;
+default-lease-time 7200;
+max-lease-time 7200;
+#log-facility local7;
+
+
+failover peer \"DHCPFO\" {
+        primary;                        
+        address 10.53.5.1;              
+        port 647;                       
+        peer address 10.53.5.2;         
+        peer port 647;                 
+        max-response-delay 15;
+        max-unacked-updates 5;
+        load balance max seconds 3;
+        mclt 1800;                      
+        split 128;                      
+}
+
+
+subnet 172.99.99.0 netmask 255.255.255.224 {
+}
+
+subnet 10.53.5.0 netmask 255.255.255.240 {
+}
+
+subnet 10.17.2.0 netmask 255.255.255.248 {
+}
+
+subnet 192.33.9.0 netmask 255.255.255.128 {
+        option routers 192.33.9.125,192.33.9.126;
+        option broadcast-address 192.33.9.127;
+        pool {
+                failover peer \"DHCPFO\";
+                range 192.33.9.10 192.33.9.110;
+        }
+}
+
+subnet 192.60.5.0 netmask 255.255.255.128 {
+        option routers 192.60.5.125,192.60.5.126;
+        option broadcast-address 192.60.5.127;
+        pool {
+                failover peer \"DHCPFO\";
+                range 192.60.5.10 192.60.5.110;
+        }
+}
+" > /etc/dhcp/dhcpd.conf \
+&& rc-service dhcpd start \
+&& rc-update add dhcpd \
+&& tail -f /var/lib/dhcp/dhcpd.leases &

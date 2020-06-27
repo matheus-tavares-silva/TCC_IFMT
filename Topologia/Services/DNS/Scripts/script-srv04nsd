@@ -1,0 +1,81 @@
+#Script para agilizar o uso dos serviços.
+
+echo SRV04-NSD > /etc/hostname \
+&& rc-service hostname restart \
+&& printf "%b\n"\
+    "auto lo"\
+    "iface lo inet loopback\n"\
+    "auto eth0"\
+    "iface eth0 inet static"\
+    "   address 10.53.5.4"\
+    "   netmask 255.255.255.240"\
+    "   gateway 10.53.5.14" > /etc/network/interfaces \
+&& rc-service networking restart \
+&& printf "%b\n"\
+    "nameserver 10.53.5.3"\
+    "nameserver 10.53.5.4"\
+    "nameserver 1.1.1.1" > /etc/resolv.conf \
+&& printf "%b\n"\
+    "#/media/cdrom/apks"\
+    "/v3.10/main"\
+    "/v3.10/community"\
+    "/edge/main"\
+    "/edge/community"\
+    "#/edge/testing\n"\
+    "http://dl-cdn.alpinelinux.org/alpine/v3.10/main"\
+    "http://dl-cdn.alpinelinux.org/alpine/v3.10/community"\
+    "http://dl-cdn.alpinelinux.org/alpine/edge/main"\
+    "http://dl-cdn.alpinelinux.org/alpine/edge/community"\
+    "#http://dl-cdn.alpinelinux.org/alpine/edge/testing" > /etc/apk/repositories \
+&& apk update \
+&& apk add nsd \
+&& cd /etc/nsd && touch nsd.conf \
+&& printf \
+"
+server:
+        ip-address: 10.53.5.4
+        port: 53
+        username: nsd
+        identity: \"\"
+        zonesdir: \"/etc/nsd/zones\"
+        logfile: \"/var/log/nsd.log\"
+
+remote-control:
+        control-enable: yes
+        control-interface: 127.0.0.1
+        control-port: 8952
+        server-key-file: \"/etc/nsd/nsd_server.key\"
+        server-cert-file: \"/etc/nsd/nsd_server.pem\"
+        control-key-file: \"/etc/nsd/nsd_control.key\"
+        control-cert-file: \"/etc/nsd/nsd_control.pem\"
+
+key:
+        name: \"sec_key\"
+        algorithm: hmac-md5
+        secret: \"HU7+Bs4FjmyjET7aqdJMAXNSdG0v\"
+
+pattern:
+        name: \"response_pattern\"
+        allow-notify: 10.53.5.3 sec_key
+        request-xfr: AXFR 10.53.5.3@53 sec_key
+
+zone:
+        name: \"local\"
+        zonefile: \"local.zone.foward\"
+        include-pattern: \"response_pattern\"
+
+zone:
+        name: \"5.53.10.in-addr.arpa\"
+        zonefile: \"5.53.10.zone.reverse\"
+        include-pattern: \"response_pattern\"
+
+zone:
+        name: \"99.99.172.in-addr.arpa\"
+        zonefile: \"99.99.172.zone.reverse\"
+        include-pattern: \"response_pattern\"
+" > /etc/nsd/nsd.conf \
+&& mkdir /etc/nsd/zones \
+&& nsd-control-setup \
+&& rc-service nsd start \
+&& rc-update add nsd \
+&& tail -f /var/log/nsd.log &

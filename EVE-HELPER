@@ -1,0 +1,4 @@
+[EVE-NG - Helper Commands]
+
+#Comando para refazer as configurações do servidor:
+rm -f /opt/ovf/.configured
