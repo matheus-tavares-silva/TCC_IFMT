@@ -88,39 +88,42 @@
 **R01:**
 
     configure terminal
+        interface eth 0/0
+            no shutdown
         interface eth 0/0.1
             encapsulation dot1Q 99
             ip address 172.99.99.21 255.255.255.224
             ip ospf 1 area 1
+            ospf cost 64
         interface eth 0/0.2
             encapsulation dot1Q 172
             ip address 10.17.2.1 255.255.255.248
-            no shutdown
             ip ospf 1 area 1
             ip ospf hello-interval 1 
             ip ospf dead-interval 3
             ip nat inside
-
-
+        exit
         access-list 1 permit any
         ip nat inside source list 1 interface eth 0/1 overload
 
 **R02:**
 
     configure terminal
+        interface eth 0/0
+            no shutdown
         interface eth 0/0.1
             encapsulation dot1Q 99
             ip address 172.99.99.20 255.255.255.224
             ip ospf 1 area 1
+            ospf cost 64
         interface eth 0/0.2
             encapsulation dot1Q 172
             ip address 10.17.2.2 255.255.255.248
-            no shutdown
             ip ospf 1 area 1
             ip ospf hello-interval 1 
             ip ospf dead-interval 3
             ip nat inside
-        
+        exit
         access-list 1 permit any
         ip nat inside source list 1 interface eth 0/1 overload
 
@@ -131,6 +134,7 @@
     configure terminal
         interface eth 0/1
             ip address dhcp
+            ip nat outside
             no shutdown
             exit
 
