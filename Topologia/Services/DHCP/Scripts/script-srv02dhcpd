@@ -32,7 +32,7 @@ echo SRV02-DHCP > /etc/hostname \
 && printf \
 "
 option domain-name \"SRV02-DHCP\";
-option domain-name-servers 10.53.5.3,10.53.5.4,1.1.1.1;
+option domain-name-servers 1.1.1.1,8.8.8.8,10.53.5.3,10.53.5.4;
 
 authoritative;
 option ntp-servers 200.160.0.8,200.160.7.186;

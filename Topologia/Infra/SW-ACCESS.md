@@ -121,9 +121,6 @@
 **SW03,SW04,SW05:**
 
 configure terminal
-    vlan 99
-        name VLAN-99-MANAGEMENT
-        exit
     vlan 339
         name VLAN-339-EMPLOYEES
         exit
@@ -136,10 +133,7 @@ configure terminal
 **SW03,SW04,SW05:**
 
 configure terminal
-    interface vlan 99
-        ip address 172.99.99.10 255.255.255.224
-        description MANAGEMENT-99
-        no shutdown
+    interface vlan 1
         exit
 
 

@@ -11,29 +11,23 @@ enable
     configure terminal
         hostname SW01-CORE
         ip domain-name sw01core.local
-        ip ssh rsa keypair-name tccmatheus
         crypto key generate rsa usage-keys label tccmatheus modulus 1024
-        ip ssh time-out 120
-        ip ssh version 2
-        ip ssh authentication-retries 3
         service password-encryption
         username admin privilege 15 secret tccmatheus
+        login block-for 10 attempts 5 within 50
 
         line console 0
-            session-limit 2
             session-timeout 180
-            session-disconnect-warning 30
             login local
             exit
         line aux 0
-            session-limit 2
             session-timeout 120
-            session-disconnect-warning 30
             login local
             exit
         line vty 0 2
             login local
-            transport input ssh
+            transport input all
+            exit
 
 **SW02:**
 
@@ -41,29 +35,23 @@ enable
         configure terminal
             hostname SW02-CORE
             ip domain-name sw02core.local
-            ip ssh rsa keypair-name tccmatheus
             crypto key generate rsa usage-keys label tccmatheus modulus 1024
-            ip ssh time-out 120
-            ip ssh version 2
-            ip ssh authentication-retries 3
             service password-encryption
             username admin privilege 15 secret tccmatheus
+            login block-for 10 attempts 5 within 50
 
             line console 0
-                session-limit 2
                 session-timeout 180
-                session-disconnect-warning 30
                 login local
                 exit
             line aux 0
-                session-limit 2
                 session-timeout 120
-                session-disconnect-warning 30
                 login local
                 exit
             line vty 0 2
                 login local
-                transport input ssh
+                transport input all
+                exit
 
 ##### Add the DNS address from local servers:
 
@@ -88,9 +76,6 @@ enable
 **SW01,SW02:**
 
     configure terminal
-        vlan 99
-            name VLAN-99-MANAGEMENT
-            exit
         vlan 535
             name VLAN-535-SERVICES
             exit
@@ -109,12 +94,8 @@ enable
 **SW01:**
 
     configure terminal
-        interface vlan 99
-            ip address 172.99.99.29 255.255.255.224
-            ip ospf 1 area 1
-            description MANAGEMENT-99
-            no shutdown
-            exit
+        interface lo 0
+            ip address 10.1.1.3 255.255.255.255
         interface vlan 535
             ip address 10.53.5.13 255.255.255.240
             ip ospf 1 area 1
@@ -132,14 +113,14 @@ enable
             ip address 192.60.5.125 255.255.255.128
             ip ospf 1 area 1
             ip helper-address 10.53.5.1
+            standby 1 ip 192.60.5.124 ! Experimental Feature
+            standby 1 priority 110
             description COSTUMERS-605
             no shutdown
             exit
         interface vlan 172
             ip address 10.17.2.5 255.255.255.248
             ip ospf 1 area 1
-            ip ospf hello-interval 1 
-            ip ospf dead-interval 3
             description INTERNET-172
             no shutdown
             exit
@@ -147,12 +128,8 @@ enable
 **SW02:**
 
     configure terminal
-        interface vlan 99
-            ip address 172.99.99.30 255.255.255.224
-            ip ospf 1 area 1
-            description MANAGEMENT-99
-            no shutdown
-            exit
+        interface lo 0
+            ip address 10.1.1.4 255.255.255.255
         interface vlan 535
             ip address 10.53.5.14 255.255.255.240
             ip ospf 1 area 1
@@ -163,21 +140,22 @@ enable
             ip address 192.33.9.126 255.255.255.128
             ip ospf 1 area 1
             ip helper-address 10.53.5.2
-            description EMPLOYEES-339
+            description EMPLOYEES-339           
             no shutdown
             exit
         interface vlan 605
             ip address 192.60.5.126 255.255.255.128
             ip ospf 1 area 1
             ip helper-address 10.53.5.2
+            standby 1 ip 192.60.5.124 ! Experimental Feature
+            standby 1 priority 120
+            standby 1 preempt
             description COSTUMERS-605
             no shutdown
             exit
         interface vlan 172
             ip address 10.17.2.6 255.255.255.248
             ip ospf 1 area 1
-            ip ospf hello-interval 1 
-            ip ospf dead-interval 3
             description INTERNET-172
             no shutdown
             exit

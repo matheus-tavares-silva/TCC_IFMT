@@ -1,0 +1,107 @@
+!
+enable
+    configure terminal
+        hostname SW01-CORE
+        ip domain-name sw01core.local
+        crypto key generate rsa usage-keys label tccmatheus modulus 1024
+        service password-encryption
+        username admin privilege 15 secret tccmatheus
+        login block-for 10 attempts 5 within 50
+
+        line console 0
+            session-timeout 180
+            login local
+            exit
+        line aux 0
+            session-timeout 120
+            login local
+            exit
+        line vty 0 2
+            login local
+            transport input all
+            exit
+!
+ip domain-lookup
+        ip name-server 10.53.5.3
+        ip name-server 10.53.5.4
+!
+clock timezone EST -4 0
+        ntp server 200.160.0.8
+        ntp server 200.160.7.186
+!
+vlan 535
+    name VLAN-535-SERVICES
+    exit
+vlan 339
+    name VLAN-339-EMPLOYEES
+    exit
+vlan 605
+    name VLAN-605-COSTUMERS
+    exit
+vlan 172
+    name VLAN-172-INTERNET
+    exit
+!
+interface lo 0
+    ip address 7.7.7.3 255.255.255.255
+    ip ospf 1 area 1
+interface vlan 535
+    ip address 10.53.5.13 255.255.255.240
+    ip ospf 1 area 1
+    description SERVICES-535
+    no shutdown
+    exit
+interface vlan 339
+    ip address 192.33.9.125 255.255.255.128
+    ip ospf 1 area 1
+    ip helper-address 10.53.5.1
+    description EMPLOYEES-339
+    no shutdown
+    exit
+interface vlan 605
+    ip address 192.60.5.125 255.255.255.128
+    ip ospf 1 area 1
+    ip helper-address 10.53.5.1
+    standby 1 ip 192.60.5.124 ! Experimental Feature
+    standby 1 priority 110
+    description COSTUMERS-605
+    no shutdown
+    exit
+interface vlan 172
+    ip address 10.17.2.5 255.255.255.248
+    ip ospf 1 area 1
+    description INTERNET-172
+    no shutdown
+    exit
+!
+interface range eth 3/2 - 3
+    channel-group 1 mode active
+    channel-protocol lacp
+    switchport trunk encapsulation dot1q
+    switchport mode trunk
+    switchport trunk allowed vlan 535,339,605,172
+    exit
+interface port-channel 1
+    description TRUNK-LACP-SW01CORE
+    switchport trunk encapsulation dot1q
+    switchport mode trunk
+    switchport trunk allowed vlan 535,339,605,172
+    exit
+!
+interface eth 0/0
+    switchport trunk encapsulation dot1q
+    switchport mode trunk
+    switchport trunk allowed vlan 172
+    exit
+interface range eth 0/2 - 3, eth 1/0 - 3, eth 2/0 - 2
+    switchport mode access
+    switchport access vlan 535
+    exit
+interface range eth 2/3, eth 3/0 - 1
+    switchport trunk encapsulation dot1q
+    switchport mode trunk
+    switchport trunk allowed vlan 339,605
+    exit
+!
+spanning-tree mode rapid-pvst
+spanning-tree vlan 339,605,535
