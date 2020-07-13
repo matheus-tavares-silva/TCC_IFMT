@@ -66,11 +66,6 @@ zone:
         name: \"5.53.10.in-addr.arpa\"
         zonefile: \"5.53.10.zone.reverse\"
         include-pattern: \"request_pattern\"
-
-zone:
-        name: \"99.99.172.in-addr.arpa\"
-        zonefile: \"99.99.172.zone.reverse\"
-        include-pattern: \"request_pattern\"
 " > /etc/nsd/nsd.conf \
 && mkdir /etc/nsd/zones \
 && cd /etc/nsd/zones \
@@ -94,14 +89,6 @@ srv03nsd          IN A                  10.53.5.3
 srv04nsd          IN A                  10.53.5.4
 srv01dhcp         IN A                  10.53.5.1
 srv02dhcp         IN A                  10.53.5.2
- 
-sw01core          IN A                  172.99.99.29  
-sw02core          IN A                  172.99.99.30
-sw03access        IN A                  172.99.99.10
-sw04access        IN A                  172.99.99.11
-sw05access        IN A                  172.99.99.12
-r01gw             IN A                  172.99.99.20
-r02gw             IN A                  172.99.99.21
 " > ./local.zone.foward \
 && touch 5.53.10.zone.reverse \
 && printf \
@@ -125,30 +112,6 @@ r02gw             IN A                  172.99.99.21
 1               IN      PTR     srv01dhcp.local.
 2               IN      PTR     srv02dhcp.local.
 " > ./5.53.10.zone.reverse \
-&& touch 99.99.172.zone.reverse \
-&& printf \
-"
-\$ORIGIN 99.99.172.in-addr.arpa.
-\$TTL 1800
-@   IN  SOA ns1.srv03nsd.local. root.local. (
-    2014070201        ; serial number
-    3600                    ; refresh
-    900                     ; retry
-    1209600                 ; expire
-    1800                    ; ttl
-)
-
-                IN NS                 ns1.srv03nsd.local.
-                IN NS                 ns2.srv04nsd.local.
-
-29               IN      PTR     sw01core.local.
-30               IN      PTR     sw02core.local.
-10               IN      PTR     sw03access.local.
-11               IN      PTR     sw04access.local.
-12               IN      PTR     sw05access.local.
-20               IN      PTR     r01gw.local.
-21               IN      PTR     r02gw.local.
-" > ./99.99.172.zone.reverse \
 && nsd-control-setup \
 && rc-service nsd start \
 && rc-update add nsd \

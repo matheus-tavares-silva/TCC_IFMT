@@ -20,13 +20,4 @@ srv03nsd          IN A                  10.53.5.3
 srv04nsd          IN A                  10.53.5.4
 srv01dhcp         IN A                  10.53.5.1
 srv02dhcp         IN A                  10.53.5.2
- 
-; Manage A records
 
-sw01core          IN A                  172.99.99.29  
-sw02core          IN A                  172.99.99.30
-sw03access        IN A                  172.99.99.10
-sw04access        IN A                  172.99.99.11
-sw05access        IN A                  172.99.99.12
-r01gw             IN A                  172.99.99.20
-r02gw             IN A                  172.99.99.21

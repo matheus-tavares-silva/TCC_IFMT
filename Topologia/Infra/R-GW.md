@@ -83,62 +83,85 @@
     configure terminal
         clock timezone EST -4 0
         ntp server 200.160.0.8
-        ntp server 200.160.7.186
-
-##### Add to the outer interface DHCP mode for internet connection. 
-
-**R01,R02:**
-
-    configure terminal
-        interface eth 0/1
-            ip address dhcp
-            ip nat outside
-            no shutdown
-            exit
+        ntp server 200.160.7.186  
 
 ##### Add the interfaces address and Dot1Q encapsulation for access and management Vlan's and set the nat overload for internet access:
 
 **R01:**
 
     configure terminal
-        interface lo 0
-            ip address 10.1.1.1 255.255.255.255
+        interface eth 0/1
+            ip address dhcp
+            ip nat outside
+            no shutdown
         interface eth 0/0
             no shutdown
         interface eth 0/0.1
             encapsulation dot1Q 172
             ip address 10.17.2.1 255.255.255.248
-            ip ospf 1 area 1
-            ip ospf hello-interval 1 
-            ip ospf dead-interval 3
+            ip ospf dead-interval 1
+            ip ospf dead-interval minimal hello-multiplier 5
             ip nat inside
-        exit
+            exit
+        interface eth 0/2
+            no shutdown
+        interface eth 0/2.1
+            encapsulation dot1Q 173
+            ip address 10.17.3.1 255.255.255.248
+            ip ospf dead-interval 1
+            ip ospf dead-interval minimal hello-multiplier 5
+            ip ospf cost 64
+            ip nat inside
+            exit
         access-list 1 permit any
         ip nat inside source list 1 interface eth 0/1 overload
 
 **R02:**
 
     configure terminal
-        interface lo 0
-            ip address 10.1.1.2 255.255.255.255
+        interface eth 0/1
+            ip address dhcp
+            ip nat outside
+            no shutdown
         interface eth 0/0
             no shutdown
         interface eth 0/0.1
             encapsulation dot1Q 172
             ip address 10.17.2.2 255.255.255.248
-            ip ospf 1 area 1
-            ip ospf hello-interval 1 
-            ip ospf dead-interval 3
+            ip ospf dead-interval 1
+            ip ospf dead-interval minimal hello-multiplier 5
             ip nat inside
-        exit
+        interface eth 0/2
+            no shutdown
+        interface eth 0/2.1
+            encapsulation dot1Q 173
+            ip address 10.17.3.2 255.255.255.248
+            ip ospf dead-interval 1
+            ip ospf dead-interval minimal hello-multiplier 5
+            ip ospf cost 64
+            ip nat inside
+            exit
         access-list 1 permit any
         ip nat inside source list 1 interface eth 0/1 overload
 
 ##### Add the OSPF parameters for intercommunication over local network devices.
 
-**R01,R02:**
+**R01:**
 
     configure terminal
         router ospf 1
+            router-id 10.0.0.1
+            network 10.17.2.0 255.255.255.248 area 1
+            network 10.17.3.0 255.255.255.248 area 1
+            default-information originate always
+            exit
+
+**R02:**
+
+    configure terminal
+        router ospf 1
+            router-id 10.0.0.2
+            network 10.17.2.0 255.255.255.248 area 1
+            network 10.17.3.0 255.255.255.248 area 1
             default-information originate always
             exit

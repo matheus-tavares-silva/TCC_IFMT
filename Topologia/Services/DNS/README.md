@@ -90,7 +90,6 @@
             && cd /etc/nsd/zones \
             && touch local.zone.foward \
             && touch 5.53.10.zone.reverse \
-            && touch 99.99.172.zone.reverse
 
     # Habilitar e adicionar o serviço para inicialização com o sistema:
 
