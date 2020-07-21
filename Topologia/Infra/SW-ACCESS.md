@@ -120,50 +120,50 @@
 
 **SW03,SW04,SW05:**
 
-configure terminal
-    vlan 339
-        name VLAN-339-EMPLOYEES
-        exit
-    vlan 605
-        name VLAN-605-COSTUMERS
-        exit
+    configure terminal
+        vlan 339
+            name VLAN-339-EMPLOYEES
+            exit
+        vlan 605
+            name VLAN-605-COSTUMERS
+            exit
 
 ##### Add the management Vlan for ssh remote access: 
 
 **SW03,SW04,SW05:**
 
-configure terminal
-    interface vlan 1
-        exit
+    configure terminal
+        interface vlan 1
+            exit
 
 
 ##### Add the Vlan's to each port range for end device access: 
 
 **SW03,SW04,SW05:**
 
-Configure terminal
-    interface range ethernet 5/2 - 3
-        switchport trunk encapsulation dot1q
-        switchport mode trunk
-        switchport trunk allowed vlan 99,339,605
-        exit
-    interface range ethernet 0/3, ethernet 1/0 - 3, ethernet 2/0 - 3, ethernet 3/0 - 3, ethernet 4/0 - 3
-        switchport mode access
-        switchport access vlan 339
-        exit
-    interface ethernet 5/0
-        switchport mode access
-        switchport access vlan 339
-        exit
-    interface range ethernet 0/0 - 2
-        switchport mode access
-        switchport access vlan 605
-        exit
+    Configure terminal
+        interface range ethernet 5/2 - 3
+            switchport trunk encapsulation dot1q
+            switchport mode trunk
+            switchport trunk allowed vlan 99,339,605
+            exit
+        interface range ethernet 0/3, ethernet 1/0 - 3, ethernet 2/0 - 3, ethernet 3/0 - 3, ethernet 4/0 - 3
+            switchport mode access
+            switchport access vlan 339
+            exit
+        interface ethernet 5/0
+            switchport mode access
+            switchport access vlan 339
+            exit
+        interface range ethernet 0/0 - 2
+            switchport mode access
+            switchport access vlan 605
+            exit
 
 ##### Add the PVSTP configuration to prevent loopings on the network: 
 
 **SW03,SW04,SW05:**
 
-configure terminal
-    spanning-tree mode rapid-pvst
-    spanning-tree vlan 339,605
+    configure terminal
+        spanning-tree mode rapid-pvst
+        spanning-tree vlan 339,605

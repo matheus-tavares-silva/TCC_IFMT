@@ -287,7 +287,7 @@
             switchport
             switchport trunk encapsulation dot1q
             switchport mode trunk
-            switchport trunk allowed vlan 99,339,605
+            switchport trunk allowed vlan 339,605
             exit
 
 ##### Add the OSPF id for correct working of protocol:
