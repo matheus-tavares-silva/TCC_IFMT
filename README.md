@@ -19,8 +19,8 @@ Base de serviços que não foram atribuidas aos dispositivos de redes, optei pod
 
 1. Infraestrutura
     1. [Routers](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/R-GW.md)
-    2. [Switchs Núcleo](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/SW-ACCESS.md)
-    3. [Switchs Distribuição/Acesso](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/SW-CORE.md)
+    2. [Switchs Núcleo](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/SW-CORE.md)
+    3. [Switchs Distribuição/Acesso](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/SW-ACCESS.md)
 
 2. Serviços
     1. [DNS](https://github.com/s0berano/TCC_IFMT/blob/master/Servi%C3%A7os/DNS/SRV-DNS.md)
