@@ -18,13 +18,13 @@ Base de serviços que não foram atribuidas aos dispositivos de redes, optei pod
 ### Apêndice
 
 1. Infraestrutura
-    1. [Routers](https://github.com/user/repo/blob/branch/other_file.md)
-    2. [Switchs Núcleo](https://github.com/user/repo/blob/branch/other_file.md)
-    3. [Switchs Distribuição/Acesso](https://github.com/user/repo/blob/branch/other_file.md)
+    1. [Routers](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/R-GW.md)
+    2. [Switchs Núcleo](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/SW-ACCESS.md)
+    3. [Switchs Distribuição/Acesso](https://github.com/s0berano/TCC_IFMT/blob/master/Infraestrutura/SW-CORE.md)
 
 2. Serviços
-    1. [DNS]()
-    2. [DHCP]()
+    1. [DNS](https://github.com/s0berano/TCC_IFMT/blob/master/Servi%C3%A7os/DNS/SRV-DNS.md)
+    2. [DHCP](https://github.com/s0berano/TCC_IFMT/blob/master/Servi%C3%A7os/DHCP/SRV-DHCP.md)
 
 
 #### Configuração da interface bridge no linux:
