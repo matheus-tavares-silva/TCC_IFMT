@@ -1,10 +1,35 @@
 # TCC - Matheus Tavares
-## High Availability Networking
+## Redes de Alta Disponibilidade
+
+### Objetivo
+
+Este trabalho foi efetuado com o objetivo de concluir o curso de redes de computadores do Instituto Federal de Educação de Mato Grosso (IFMT), O cenário reproduzido neste trabalho remete a uma rede de alta diponibilidade voltado para os dispositivos da Cisco Networking, apesar de serem utilizados diversos protocolos não proprietários.
+
+O trabalho está dividio em duas partes para melhor compreenção:
+
+**Infraestrutura**
+
+Na infraestrutura onde foi estrutura toda a topologia da rede onde feito a estruturação "física" do projeto e como ficariam alocados os dispositivos de redes.
+
+**Serviços**
+
+Base de serviços que não foram atribuidas aos dispositivos de redes, optei pode levantar dois servidores com Alpine linux para o serviços de DHCP e DNS.
+
+### Apêndice
+
+1. Infraestrutura
+    1. [Routers](https://github.com/user/repo/blob/branch/other_file.md)
+    2. [Switchs Núcleo](https://github.com/user/repo/blob/branch/other_file.md)
+    3. [Switchs Distribuição/Acesso](https://github.com/user/repo/blob/branch/other_file.md)
+
+2. Serviços
+    1. [DNS]()
+    2. [DHCP]()
 
 
-### Linux Bridge Interface Configuration:
+#### Configuração da interface bridge no linux:
 
-##### Set a bridge interface on system for virtual manager using netplan:
+##### Configure a uma interface bridge no netplan:
 
     network:
     version: 2
@@ -17,7 +42,7 @@
         dhcp4: false
         interfaces: [eno1]
 
-#### Add a bridge to libvirt for this, create a temporary file named br0.xml:
+#### Adicione a interface bridge ao libvirt, crie um arquivo temporário nomeado de br0.xml em /tmp:
 
     <network>
         <name>br0</name>
@@ -26,12 +51,12 @@
     </network>
 
 
-#### Add this network file via 'virsh' command:
+#### Adicione essa nova rede com o comando 'virsh':
 
     virsh net-define /tmp/br0.xml
     virsh net-start br0
     virsh net-autostart br0
 
-#### Finally make a test to confirm if all working correctly:
+#### Por último confirme se tudo está funcionando:
 
     virsh net-list --all

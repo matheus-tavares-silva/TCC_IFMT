@@ -1,9 +1,8 @@
-# Switch L3 Core Configuration.
+# Configurações dos switches L2.
+## Configuração dos dispositivos de distribuição/acesso da rede.
 
-## These are the access devices of this network.
-#### Primary access configurations.
 
-##### Here it will be added security parameters like user and password and ssh access:
+##### Configuração base de segurança e acesso via ssh:
 
 **SW03:**
 
@@ -98,7 +97,7 @@
                 login local
                 transport input ssh
 
-##### Add the DNS address from local servers:
+##### Configuração dos DNS locais:
 
 **SW03,SW04,SW05:**
 
@@ -107,7 +106,7 @@
         ip name-server 10.53.5.3
         ip name-server 10.53.5.4
 
-##### Add the NTP address from ntp.br servers:
+##### Configuração dos servidores NTP com base nos servidores do ntp.br:
 
 **SW03,SW04,SW05:**
 
@@ -116,7 +115,7 @@
         ntp server 200.160.0.8
         ntp server 200.160.7.186
 
-##### Add the services Vlan's of the local network:         
+##### Configuração das VLANs principais do acesso:         
 
 **SW03,SW04,SW05:**
 
@@ -128,16 +127,7 @@
             name VLAN-605-COSTUMERS
             exit
 
-##### Add the management Vlan for ssh remote access: 
-
-**SW03,SW04,SW05:**
-
-    configure terminal
-        interface vlan 1
-            exit
-
-
-##### Add the Vlan's to each port range for end device access: 
+##### Configuração das interfaces tronco e acesso: 
 
 **SW03,SW04,SW05:**
 
@@ -160,7 +150,7 @@
             switchport access vlan 605
             exit
 
-##### Add the PVSTP configuration to prevent loopings on the network: 
+##### Configuração do PVSTP para prevenção de loops: 
 
 **SW03,SW04,SW05:**
 

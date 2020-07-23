@@ -1,9 +1,7 @@
-# Switch L3 Core Configuration.
+# Configurações dos switches L3.
+## Configuração dos dispositivos de núcleo da rede.
 
-## These are the cores devices of this network.
-#### Primary access configurations.
-
-##### Here it will be added security parameters like user and password and ssh access:
+##### Configuração base de segurança e acesso via ssh:
 
 **SW01:**
 
@@ -65,7 +63,7 @@
                 login local
                 transport input ssh
 
-##### Add the DNS address from local servers:
+##### Configuração dos DNS locais:
 
 **SW01,SW02:**
 
@@ -74,7 +72,7 @@
         ip name-server 10.53.5.3
         ip name-server 10.53.5.4
 
-##### Add the NTP address from ntp.br servers:
+##### Configuração dos servidores NTP com base nos servidores do ntp.br:
 
 **SW01,SW02:**
 
@@ -83,7 +81,7 @@
         ntp server 200.160.0.8
         ntp server 200.160.7.186
 
-##### Add the main Vlan's of the local network:         
+##### Configuração das VLANs principais da rede:         
 
 **SW01,SW02:**
 
@@ -104,7 +102,7 @@
             name VLAN-173-INTERNET
             exit
 
-##### Add the respective IPs for SVI to permit the internetwork access and local management.
+##### Configuração dos endereços das interfaces SVIs.
 
 **SW01:**
 
@@ -221,7 +219,7 @@
             no shutdown
             exit
 
-##### Add the LACP configuration to increase traffic between the core devices:
+##### Configuração do link LACP entre os switches de núcleo:
 
 **SW01:**
 
@@ -261,7 +259,7 @@
             switchport trunk allowed vlan 535,339,605,172,173
             exit
 
-##### Add the VLAN that will pruned in trunk, allowing only the necessary for management and interconnection: 
+##### Configuração das interfaces tronco e acesso: 
 
 **SW01,SW02:**
 
@@ -290,7 +288,7 @@
             switchport trunk allowed vlan 339,605
             exit
 
-##### Add the OSPF id for correct working of protocol:
+##### Configuração das redes OSPF:
 
 **SW01:**
 
@@ -316,7 +314,7 @@
             network 10.17.3.0 255.255.255.248 area 1
             exit
 
-##### Add the PVSTP configuration to prevent loopings on the network: 
+##### Configuração do PVSTP para prevenção de loops: 
 
 **SW01,SW02:**
 

@@ -1,9 +1,7 @@
-# Gateway Routers Configuration.
+# Configurações dos rputers.
+## Configuração dos dispositivos de acesso externo a rede.
 
-## These are the gateway's of this network.
-#### Primary access configurations.
-
-##### Here it will be added security parameters like user and password and ss h access:
+##### Configuração base de segurança e acesso via ssh:
 
 **R01:**
 
@@ -67,7 +65,7 @@
                 transport input ssh
                 exit
 
-##### Add the DNS address from local servers:
+##### Configuração dos DNS locais:
 
 **R01,R02:**
 
@@ -76,7 +74,7 @@
         ip name-server 10.53.5.3
         ip name-server 10.53.5.4
 
-##### Add the NTP address from ntp.br servers:
+##### Configuração dos servidores NTP com base nos servidores do ntp.br:
 
 **R01,R02:**
 
@@ -85,7 +83,7 @@
         ntp server 200.160.0.8
         ntp server 200.160.7.186  
 
-##### Add the interfaces address and Dot1Q encapsulation for access and management Vlan's and set the nat overload for internet access:
+##### Configuração das interfaces encapsuladas e do NAT:
 
 **R01:**
 
@@ -144,7 +142,7 @@
         access-list 1 permit any
         ip nat inside source list 1 interface eth 0/1 overload
 
-##### Add the OSPF parameters for intercommunication over local network devices.
+##### Configuração das redes OSPF:
 
 **R01:**
 
