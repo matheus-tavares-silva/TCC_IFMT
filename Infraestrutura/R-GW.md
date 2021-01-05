@@ -1,4 +1,4 @@
-# Configurações dos rputers.
+# Configurações dos router.
 ## Configuração dos dispositivos de acesso externo a rede.
 
 ##### Configuração base de segurança e acesso via ssh:
