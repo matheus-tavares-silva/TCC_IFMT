@@ -86,11 +86,11 @@
 
 **SRV03:**
 
-Arquivo: [dhcpd-srv01.conf](https://github.com/s0berano/TCC_IFMT/tree/master/Serviços/DNS/nsd-srv03.conf)
+Arquivo: [nsd-srv01.conf](https://github.com/s0berano/TCC_IFMT/tree/master/Serviços/DNS/nsd-srv03.conf)
 
 **SRV04:**
 
-Arquivo: [dhcpd-srv02.conf](https://github.com/s0berano/TCC_IFMT/tree/master/Serviços/DNS/nsd-srv04.conf)
+Arquivo: [nsd-srv02.conf](https://github.com/s0berano/TCC_IFMT/tree/master/Serviços/DNS/nsd-srv04.conf)
 
 ##### Criar arquivo para pasta para os aquivos de zona:
 
